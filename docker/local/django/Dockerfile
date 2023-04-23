@@ -1,7 +1,5 @@
 ARG PYTHON_VERSION=3.10.2-slim-bullseye 
-
 FROM python:${PYTHON_VERSION} as python 
-
 FROM python as python-build-stage
 ARG BUILD_ENVIRONMRNT=local
 
@@ -9,10 +7,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     libpq-dev
 
-COPY ./requirements .   
+COPY ./requirements .    
 
 RUN pip wheel --wheel-dir /usr/src/app/wheels \
     -r ${BUILD_ENVIRONMRNT}.txt
+
 
 FROM python as python-run-stage
 
@@ -20,12 +19,9 @@ ARG BUILD_ENVIRONMRNT=local
 ARG APP_HOME=/app
 
 ENV PYTHONDONTWRITEBYTECODE 1 
-
 ENV PYTHONUNBUFFERED 1
-
 ENV BUILD_ENV ${BUILD_ENVIRONMRNT}
-
-WORKDIR ${APP_HOME}    
+WORKDIR ${APP_HOME}
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     libpq-dev \
